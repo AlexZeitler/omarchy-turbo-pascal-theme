@@ -62,6 +62,38 @@ it ran on as well. Turing Award in 1984. He died in January 2024.
 The active window border is a gradient from the frame cyan to its lighter
 step, set through `hyprland_active_border` in `colors.toml`.
 
+## Neovim
+
+Omarchy refuses any `*.lua` that comes out of a cloned theme, so the syntax
+mapping cannot ship as a file in the theme. It ships as a template instead,
+which lives in your own config and is not subject to that rule. Link it once:
+
+```bash
+mkdir -p ~/.config/omarchy/themed
+ln -s ~/.config/omarchy/themes/turbo-pascal/themed/neovim.lua.tpl \
+  ~/.config/omarchy/themed/neovim.lua.tpl
+```
+
+`aether.nvim` spreads code over the full palette and its mapping of colour to
+syntax group is fixed. The template folds it back to three: reserved words in
+the foreground colour, everything else in the bright one, comments in the
+muted one. It also puts floats, the completion menu and the sidebars back on
+the editor field, because a window in a text-mode IDE was separated from the
+field by its frame, not by a different fill, and gives blink.cmp the frame it
+draws none of by default.
+
+Like the hooks, the template applies to every theme, not only to this one.
+That is why it does nothing unless the current theme asks for it, by shipping
+a file `neovim.syntax` containing `three-colour`. Switch to any other theme
+and Omarchy's own mapping is generated as usual.
+
+### Removing the template
+
+```bash
+rm ~/.config/omarchy/themed/neovim.lua.tpl
+omarchy theme set turbo-pascal
+```
+
 ## GTK
 
 Omarchy copies `gtk.css` into `~/.local/state/omarchy/current/theme` but never
