@@ -1,0 +1,10 @@
+# The Turbo Pascal menu bar: grey ground, black labels, red for modules that
+# call attention to themselves.
+[bar]
+background       = "#c4c6d1"
+background-alpha = 1.0
+text             = "#101010"
+active           = "#aa0000"
+scale-with-font  = true
+size-horizontal  = 26
+size-vertical    = 28

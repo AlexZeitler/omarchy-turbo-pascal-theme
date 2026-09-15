@@ -1,0 +1,71 @@
+#!/bin/bash
+#
+# Installs the theme's cliamp palette and selects it.
+#
+# Called by Omarchy as: omarchy-hook theme-set <theme-name>
+# Called manually as:   hooks/cliamp --remove
+#
+# Why a hook: cliamp is not a theme target of Omarchy. It reads its own
+# directory, ~/.config/cliamp/themes/*.toml, where a user theme overrides a
+# built-in one of the same name. Nothing carries a file from the theme to
+# there, so this hook does it.
+#
+# The hook writes two things: the palette file, named after the Omarchy theme,
+# and the `theme` key in cliamp's config. Everything else in that config, the
+# equaliser, the visualiser, the buffer, stays untouched.
+#
+# A theme that ships no cliamp.toml restores the config from the backup. The
+# palette file stays behind - it is one inert entry in `cliamp theme list`,
+# and deleting files this hook may not have written is the worse trade.
+
+set -uo pipefail
+
+THEME_FILE="$HOME/.local/state/omarchy/current/theme/cliamp.toml"
+CLIAMP_DIR="$HOME/.config/cliamp"
+CONFIG="$CLIAMP_DIR/config.toml"
+BACKUP="$CONFIG.before-omarchy-theme"
+
+[[ -d $CLIAMP_DIR ]] || exit 0
+[[ -f $CONFIG ]] || exit 0
+
+MODE="apply"
+NAME="${1:-}"
+[[ $NAME == "--remove" ]] && MODE="remove"
+
+# A theme that says nothing must not inherit the previous theme's palette.
+[[ $MODE == "apply" && ! -f $THEME_FILE ]] && MODE="remove"
+[[ $MODE == "apply" && -z $NAME ]] && exit 0
+
+if [[ $MODE == "remove" ]]; then
+  [[ -f $BACKUP ]] || exit 0
+  cp -p "$BACKUP" "$CONFIG"
+  exit 0
+fi
+
+# Back up before the first write. Without it the user's own choice of theme is
+# recorded nowhere once this hook has overwritten it.
+[[ -f $BACKUP ]] || cp -p "$CONFIG" "$BACKUP" || exit 1
+
+mkdir -p "$CLIAMP_DIR/themes" || exit 1
+cp -f "$THEME_FILE" "$CLIAMP_DIR/themes/$NAME.toml" || exit 1
+
+tmp=$(mktemp "$CLIAMP_DIR/.config.toml.XXXXXX") || exit 1
+if grep -q '^[[:space:]]*theme[[:space:]]*=' "$CONFIG"; then
+  sed "s|^[[:space:]]*theme[[:space:]]*=.*|theme = \"$NAME\"|" "$CONFIG" >"$tmp"
+else
+  { cat "$CONFIG"; printf 'theme = "%s"\n' "$NAME"; } >"$tmp"
+fi
+
+if [[ -s $tmp ]]; then
+  chmod 600 "$tmp"
+  mv "$tmp" "$CONFIG"
+else
+  rm -f "$tmp"
+  exit 1
+fi
+
+# A running cliamp writes its own config back when it exits and would undo the
+# line above. Tell the running instance directly; it then holds the choice.
+if pgrep -x cliamp >/dev/null 2>&1 && command -v cliamp >/dev/null; then
+  cliamp theme "$NAME" >/dev/null 2>&1
+fi

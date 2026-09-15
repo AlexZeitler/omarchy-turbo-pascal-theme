@@ -1,0 +1,10 @@
+# cliamp knows seven slots. Six come straight from colors.toml. The red and
+# green slots carry the visualizer, and Turbo Pascal had neither on its
+# screen, so they take the white and the yellow of the editor instead.
+bg        = "#010378"
+fg        = "#ffff55"
+bright_fg = "#ffffff"
+accent    = "#0bdfea"
+yellow    = "#f7ee0b"
+green     = "#ffffff"
+red       = "#ffff55"

@@ -1,0 +1,62 @@
+#!/bin/bash
+#
+# Writes the current Omarchy theme's GTK colours into the GTK configuration.
+#
+# Called by Omarchy as: omarchy-hook theme-set <theme-name>
+# Called manually as: gtk --remove
+#
+# Omarchy copies gtk.css into ~/.config/omarchy/current/theme but never
+# deploys it. GTK reads ~/.config/gtk-3.0/gtk.css and
+# ~/.config/gtk-4.0/gtk.css and nothing else, so without this hook the GTK
+# colours of a theme never reach Nautilus or the GTK file dialogs.
+#
+# Only the section between the two markers is written. Anything you wrote
+# yourself in those files stays untouched. A theme without a gtk.css removes
+# the section instead of leaving the previous theme's colours behind.
+
+set -uo pipefail
+
+THEME_CSS="$HOME/.local/state/omarchy/current/theme/gtk.css"
+TARGETS=("$HOME/.config/gtk-3.0/gtk.css" "$HOME/.config/gtk-4.0/gtk.css")
+
+BEGIN_MARKER="/* >>> omarchy-theme: begin, do not edit >>> */"
+END_MARKER="/* <<< omarchy-theme: end <<< */"
+
+MODE="apply"
+[[ ${1:-} == "--remove" ]] && MODE="remove"
+
+# A theme that ships no gtk.css must not keep the previous theme's colours.
+[[ $MODE == "apply" && ! -f $THEME_CSS ]] && MODE="remove"
+
+# Print a file without our own section
+strip_own_block() {
+  awk -v begin="$BEGIN_MARKER" -v end="$END_MARKER" '
+    $0 == begin { skipping = 1; next }
+    skipping && $0 == end { skipping = 0; next }
+    !skipping { print }
+  ' "$1"
+}
+
+write_css() {
+  local target=$1 tmp
+  mkdir -p "${target%/*}" || return 1
+  tmp=$(mktemp "${target%/*}/.gtk.css.XXXXXX") || return 1
+
+  [[ -f $target ]] && strip_own_block "$target" >"$tmp"
+
+  if [[ $MODE == "apply" ]]; then
+    {
+      printf '%s\n' "$BEGIN_MARKER"
+      cat "$THEME_CSS"
+      printf '%s\n' "$END_MARKER"
+    } >>"$tmp"
+  fi
+
+  chmod 644 "$tmp"
+  mv "$tmp" "$target"
+}
+
+for target in "${TARGETS[@]}"; do
+  [[ $MODE == "remove" && ! -f $target ]] && continue
+  write_css "$target"
+done

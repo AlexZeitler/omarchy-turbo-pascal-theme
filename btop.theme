@@ -1,0 +1,95 @@
+# Main background, empty for terminal default, need to be empty if you want transparent background
+theme[main_bg]="#010378"
+
+# Main text color
+theme[main_fg]="#ffff55"
+
+# Title color for boxes
+theme[title]="#ffff55"
+
+# Highlight color for keyboard shortcuts
+theme[hi_fg]="#0bdfea"
+
+# Background color of selected item in processes box
+theme[selected_bg]="#f7ee0b"
+
+# Foreground color of selected item in processes box
+theme[selected_fg]="#010378"
+
+# Color of inactive/disabled text
+theme[inactive_fg]="#aaaaaa"
+
+# Color of text appearing on top of graphs, i.e uptime and current network graph scaling
+theme[graph_text]="#ffff9c"
+
+# Background color of the percentage meters
+theme[meter_bg]="#3f4260"
+
+# Misc colors for processes box including mini cpu graphs, details memory graph and details status text
+theme[proc_misc]="#ffff9c"
+
+# CPU, Memory, Network, Proc box outline colors
+# Turbo Vision drew every frame in one colour. All four boxes take the frame cyan.
+theme[cpu_box]="#0bdfea"
+theme[mem_box]="#0bdfea"
+theme[net_box]="#0bdfea"
+theme[proc_box]="#0bdfea"
+
+# Box divider line and small boxes line color
+theme[div_line]="#aaaaaa"
+
+# Temperature graph color (Green -> Yellow -> Red)
+theme[temp_start]="#5bc98a"
+theme[temp_mid]="#f7ee0b"
+theme[temp_end]="#ff7a66"
+
+# Graphs and meters are shaded, not coloured, the way DOS drew them with the
+# block characters. Only the temperature scale keeps a meaning-carrying colour.
+theme[cpu_start]="#8e91a0"
+theme[cpu_mid]="#c4c6d1"
+theme[cpu_end]="#ffffff"
+
+# Mem/Disk free meter
+theme[free_start]="#8e91a0"
+theme[free_mid]="#c4c6d1"
+theme[free_end]="#ffffff"
+
+# Mem/Disk cached meter
+theme[cached_start]="#8e91a0"
+theme[cached_mid]="#c4c6d1"
+theme[cached_end]="#ffffff"
+
+# Mem/Disk available meter
+theme[available_start]="#8e91a0"
+theme[available_mid]="#c4c6d1"
+theme[available_end]="#ffffff"
+
+# Mem/Disk used meter (Green -> Teal -> Blue)
+theme[used_start]="#8e91a0"
+theme[used_mid]="#c4c6d1"
+theme[used_end]="#ffffff"
+
+# Download graph colors
+theme[download_start]="#8e91a0"
+theme[download_mid]="#c4c6d1"
+theme[download_end]="#ffffff"
+
+# Upload graph colors (Green -> Teal -> Blue)
+theme[upload_start]="#8e91a0"
+theme[upload_mid]="#c4c6d1"
+theme[upload_end]="#ffffff"
+
+# Process box color gradient for threads, mem and cpu usage
+theme[process_start]="#8e91a0"
+theme[process_mid]="#c4c6d1"
+theme[process_end]="#ffffff"
+
+# Graph gradient colors (spectrum shades from background to foreground)
+theme[gradient_color_0]="#010378"
+theme[gradient_color_1]="#2a2f5e"
+theme[gradient_color_2]="#4e5273"
+theme[gradient_color_3]="#6e7288"
+theme[gradient_color_4]="#8e91a0"
+theme[gradient_color_5]="#aaaaaa"
+theme[gradient_color_6]="#d2d3da"
+theme[gradient_color_7]="#ffffff"

@@ -1,0 +1,40 @@
+# Turbo Pascal
+# Borland's IDE: the blue editor field, the grey menu bar, the cyan frame.
+mode = "dark"
+
+accent = "#010378"
+hyprland_active_border = "rgba(0bdfeaff) rgba(5de0f6ff) 45deg"
+hyprland_inactive_border = "rgba(aaaaaaaa)"
+
+selection = "#3a6fd8"
+selection_background = "#f7ee0b"
+selection_foreground = "#010378"
+muted = "#aaaaaa"
+
+background = "#010378"
+dark_background = "#010556"
+darker_background = "#01033c"
+lighter_background = "#152b92"
+
+foreground = "#ffff55"
+dark_foreground = "#c4c6d1"
+light_foreground = "#ffff9c"
+bright_foreground = "#ffffff"
+
+red = "#ff7a66"
+orange = "#ffa94d"
+magenta = "#e07ce0"
+brown = "#c08a3e"
+
+blue = "#9fbeff"
+cyan = "#0bdfea"
+green = "#5bc98a"
+yellow = "#f7ee0b"
+
+bright_red = "#ffab9c"
+bright_orange = "#ffc98a"
+bright_magenta = "#f0aef0"
+bright_blue = "#cfdcff"
+bright_cyan = "#b0f5fb"
+bright_green = "#96e0b5"
+bright_yellow = "#fdf78a"

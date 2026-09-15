@@ -1,0 +1,29 @@
+# Control chrome sits on the grey dialog ground, so it is drawn in black.
+[controls]
+normal-color        = "#101010"
+normal-fill-alpha   = 0.06
+normal-border       = "#101010"
+normal-border-width = 1
+normal-border-alpha = 0.45
+
+hover-cursor-color        = "#101010"
+hover-cursor-fill-alpha   = 0.12
+hover-cursor-border       = "#101010"
+hover-cursor-border-width = 1
+hover-cursor-border-alpha = 0.35
+
+focus-color        = "#101010"
+focus-fill-alpha   = 0.12
+focus-border       = "#101010"
+focus-border-width = 1
+focus-border-alpha = 0.35
+
+# A tint, not a solid fill: the label on top stays black.
+selected-color        = "#101010"
+selected-fill-alpha   = 0.22
+selected-border       = "#101010"
+selected-border-width = 1
+selected-border-alpha = 0.7
+
+pressed-fill-alpha   = 0.25
+selection-fill-alpha = 0.35

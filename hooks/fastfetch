@@ -1,0 +1,63 @@
+#!/bin/bash
+#
+# Sets the fastfetch logo to the colour this theme picks for it.
+#
+# Called by Omarchy as: omarchy-hook theme-set <theme-name>
+# Called manually as:   hooks/fastfetch --remove
+#
+# Why a hook: Omarchy does not treat fastfetch as a theme target. There is no
+# omarchy-theme-set-fastfetch, and no bundled theme ships a fastfetch file.
+# The colours already come from the theme, because fastfetch paints with the
+# terminal's ANSI palette. Which role gets which colour, however, lives in the
+# user's own configuration.
+#
+# That distinction matters here. The logo is the largest block of colour in
+# the window. Left on "green", the whole block is painted by a slot that was
+# never meant to carry it: green has to stay readable against red in git diff,
+# so it is picked bright and saturated. As a solid block it drowns everything
+# else out.
+#
+# The hook writes the logo.color field and nothing else. The keyColor fields
+# of the individual modules stay untouched, those are the user's layout.
+
+set -uo pipefail
+
+THEME_FILE="$HOME/.local/state/omarchy/current/theme/fastfetch.json"
+TARGET="$HOME/.config/fastfetch/config.jsonc"
+BACKUP="$TARGET.before-omarchy-theme"
+
+# fastfetch falls back to /etc/fastfetch/config.jsonc, which belongs to the
+# package. Writing there is not this hook's business, so it does nothing until
+# a user configuration exists.
+[[ -f $TARGET ]] || exit 0
+command -v jq >/dev/null || exit 0
+
+MODE="apply"
+[[ ${1:-} == "--remove" ]] && MODE="remove"
+
+# A theme that says nothing must not inherit the previous theme's colour.
+[[ $MODE == "apply" && ! -f $THEME_FILE ]] && MODE="remove"
+
+# Back up before touching anything. Without it the original state is gone for
+# good: once the file has been written, whichever colour the user had chosen
+# is recorded nowhere.
+if [[ $MODE == "apply" && ! -f $BACKUP ]]; then
+  cp -p "$TARGET" "$BACKUP" || exit 1
+fi
+
+if [[ $MODE == "remove" ]]; then
+  [[ -f $BACKUP ]] || exit 0
+  cp -p "$BACKUP" "$TARGET"
+  exit 0
+fi
+
+COLOR=$(jq -r '.logo // empty' "$THEME_FILE" 2>/dev/null)
+[[ -n $COLOR ]] || exit 0
+
+tmp=$(mktemp "${TARGET%/*}/.config.jsonc.XXXXXX") || exit 1
+if jq --indent 2 --arg c "$COLOR" '.logo.color."1" = $c' "$TARGET" >"$tmp"; then
+  chmod 644 "$tmp"
+  mv "$tmp" "$TARGET"
+else
+  rm -f "$tmp"
+fi
