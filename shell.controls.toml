@@ -1,4 +1,5 @@
-# Control chrome sits on the grey dialog ground, so it is drawn in black.
+# Control chrome sits on the grey ground, so it is drawn in black rather than
+# in the foreground yellow that belongs on the blue field.
 [controls]
 normal-color        = "#101010"
 normal-fill-alpha   = 0.06

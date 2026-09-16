@@ -1,6 +1,14 @@
+# Panels take their text colour from the bar (Ui/Panel.qml), so a grey bar
+# forces a light ground here as well.
+#
+# popups.text is the compromise. Dropdowns draw it on this grey ground, but
+# the volume OSD draws it on Color.background, the blue field, because it has
+# no colour group of its own. No value reads well on both: black reaches
+# 11.2:1 on the grey and 1.2:1 on the blue, yellow the other way round. This
+# one sits at about 3:1 on each.
 [popups]
 background       = "#c4c6d1"
 background-alpha = 1.0
-text             = "#101010"
+text             = "#5f6b8a"
 border           = "hyprland.active-border"
 border-alpha     = 1.0

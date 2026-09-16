@@ -2,7 +2,7 @@
 # Borland's IDE: the blue editor field, the grey menu bar, the cyan frame.
 mode = "dark"
 
-accent = "#010378"
+accent = "#0bdfea"
 hyprland_active_border = "rgba(0bdfeaff) rgba(5de0f6ff) 45deg"
 hyprland_inactive_border = "rgba(aaaaaaaa)"
 
