@@ -62,152 +62,102 @@ it ran on as well. Turing Award in 1984. He died in January 2024.
 The active window border is a gradient from the frame cyan to its lighter
 step, set through `hyprland_active_border` in `colors.toml`.
 
-## Neovim
+## Extras (optional)
 
-Omarchy refuses any `*.lua` that comes out of a cloned theme, so the syntax
-mapping cannot ship as a file in the theme. It ships as a template instead,
-which lives in your own config and is not subject to that rule. Link it once:
+The theme works as installed. The pieces below reach programs Omarchy does not
+theme, and each needs one step from you. Omarchy refuses to run anything a
+cloned theme brings along on its own, so none of them installs automatically.
+
+All four apply to every theme, not only to this one. A theme that does not ask
+for them gets Omarchy's usual result. Only one file can sit under each name, so
+installing the same extra from another theme replaces this one.
+
+The commands copy rather than link. A copy keeps working after the theme is
+removed, but it does not follow an update: run the command again after
+`omarchy theme update`.
+
+### Neovim
+
+`aether.nvim` spreads code over the full palette. The template folds it back to
+three colours: reserved words in the foreground colour, everything else in the
+bright one, comments in the muted one. It also puts floats, the completion menu
+and the sidebars back on the editor field, and gives blink.cmp a frame. It acts
+only when the current theme ships `neovim.syntax` containing `three-colour`.
 
 ```bash
 mkdir -p ~/.config/omarchy/themed
-ln -s ~/.config/omarchy/themes/turbo-pascal/themed/neovim.lua.tpl \
-  ~/.config/omarchy/themed/neovim.lua.tpl
+cp ~/.config/omarchy/themes/turbo-pascal/themed/neovim.lua.tpl \
+  ~/.config/omarchy/themed/
+omarchy theme set turbo-pascal
 ```
 
-`aether.nvim` spreads code over the full palette and its mapping of colour to
-syntax group is fixed. The template folds it back to three: reserved words in
-the foreground colour, everything else in the bright one, comments in the
-muted one. It also puts floats, the completion menu and the sidebars back on
-the editor field, because a window in a text-mode IDE was separated from the
-field by its frame, not by a different fill, and gives blink.cmp the frame it
-draws none of by default.
-
-Like the hooks, the template applies to every theme, not only to this one.
-That is why it does nothing unless the current theme asks for it, by shipping
-a file `neovim.syntax` containing `three-colour`. Switch to any other theme
-and Omarchy's own mapping is generated as usual.
-
-### Removing the template
+To remove it:
 
 ```bash
 rm ~/.config/omarchy/themed/neovim.lua.tpl
 omarchy theme set turbo-pascal
 ```
 
-## GTK
+### GTK
 
-Omarchy copies `gtk.css` into `~/.local/state/omarchy/current/theme` but never
-deploys it. GTK reads `~/.config/gtk-3.0/gtk.css` and
-`~/.config/gtk-4.0/gtk.css` and nothing else, so out of the box the GTK
-colours never reach Nautilus or the GTK file dialogs. Those windows keep
-whatever background they had under an earlier theme.
-
-Link the hook once:
+GTK reads `~/.config/gtk-3.0/gtk.css` and `~/.config/gtk-4.0/gtk.css` and
+nothing else, so Omarchy's `gtk.css` never reaches Nautilus or the GTK file
+dialogs. The hook writes the theme's block into both files between its own
+markers, and removes it again for a theme without a `gtk.css`. Anything you
+wrote into those files yourself survives.
 
 ```bash
-mkdir -p ~/.config/omarchy/hooks/theme-set.d
-ln -s ~/.config/omarchy/themes/turbo-pascal/hooks/gtk \
-  ~/.config/omarchy/hooks/theme-set.d/gtk
+omarchy hook install theme-set ~/.config/omarchy/themes/turbo-pascal/hooks/gtk
+omarchy theme set turbo-pascal
 ```
 
-From then on every theme switch writes the GTK colours of whichever theme you
-picked, not just this one. The hook only touches the section between its own
-markers, so anything you wrote into those files yourself survives. Switching
-to a theme without a `gtk.css` removes the section again.
-
-Only one hook can be linked under the name `gtk`. If a link is already there,
-check where it points before replacing it:
+To remove it:
 
 ```bash
-readlink ~/.config/omarchy/hooks/theme-set.d/gtk
-```
-
-### Removing the hook
-
-No theme shipped with Omarchy carries a `gtk.css`. Switching to one of them
-therefore removes the section on its own, and GTK falls back to whatever was
-in the file before.
-
-To drop the hook entirely, remove the symlink and run it once by hand:
-
-```bash
+~/.config/omarchy/hooks/theme-set.d/gtk --remove
 rm ~/.config/omarchy/hooks/theme-set.d/gtk
-~/.config/omarchy/themes/turbo-pascal/hooks/gtk --remove
 ```
 
-## cliamp
+### cliamp
 
-`cliamp` reads its own directory, `~/.config/cliamp/themes/*.toml`, where a
-user theme overrides a built-in one of the same name. Nothing carries a file
-from an Omarchy theme to there, so this repository ships a hook that does.
+`cliamp` reads its own directory, `~/.config/cliamp/themes/`. The hook copies
+`cliamp.toml` there under the name of the current theme and selects it, also
+in a running instance. Before its first write it backs up
+`~/.config/cliamp/config.toml`; a theme without a `cliamp.toml` restores it.
 
 ```bash
-ln -s ~/.config/omarchy/themes/turbo-pascal/hooks/cliamp \
-  ~/.config/omarchy/hooks/theme-set.d/cliamp
+omarchy hook install theme-set \
+  ~/.config/omarchy/themes/turbo-pascal/hooks/cliamp
+omarchy theme set turbo-pascal
 ```
 
-It copies `cliamp.toml` under the name of the current Omarchy theme and
-selects it. A running `cliamp` writes its own configuration back when it
-exits and would undo that, so the hook tells the running instance directly.
-
-### Removing the hook
-
-Before its first write the hook backs up `~/.config/cliamp/config.toml`. A
-theme without a `cliamp.toml` restores that backup, so switching to any other
-theme undoes the selection on its own.
-
-To drop the hook entirely, remove the symlink and run it once by hand:
+To remove it:
 
 ```bash
+~/.config/omarchy/hooks/theme-set.d/cliamp --remove
 rm ~/.config/omarchy/hooks/theme-set.d/cliamp
-~/.config/omarchy/themes/turbo-pascal/hooks/cliamp --remove
 ```
 
-The palette file stays behind under `~/.config/cliamp/themes/`, as one inert
-entry in `cliamp theme list`.
+### fastfetch
 
-## fastfetch
-
-`fastfetch.json` names the colour of the logo. Omarchy has no fastfetch
-target, so this repository ships a hook that carries it over.
-
-`fastfetch` falls back to `/etc/fastfetch/config.jsonc` when no user file
-exists, and that file belongs to the package. A hook must not write there, so
-a user configuration has to be in place first:
+The hook sets the logo colour from `fastfetch.json` and touches nothing else.
+It needs `jq` and a user configuration, because the one under `/etc` belongs to
+the package:
 
 ```bash
 mkdir -p ~/.config/fastfetch
 cp /etc/fastfetch/config.jsonc ~/.config/fastfetch/
-ln -s ~/.config/omarchy/themes/turbo-pascal/hooks/fastfetch \
-  ~/.config/omarchy/hooks/theme-set.d/fastfetch
+omarchy hook install theme-set \
+  ~/.config/omarchy/themes/turbo-pascal/hooks/fastfetch
+omarchy theme set turbo-pascal
 ```
 
-The hook writes `logo.color` and nothing else. The `keyColor` fields of the
-individual modules stay untouched, those are your layout. It needs `jq`.
-
-Only one hook can be linked under the name `fastfetch`, and it then applies
-to every theme, not only to this one. If a link is already there, check where
-it points before replacing it:
+Before its first write the hook backs up the configuration; a theme without a
+`fastfetch.json` restores it. To remove it:
 
 ```bash
-readlink ~/.config/omarchy/hooks/theme-set.d/fastfetch
-```
-
-Left on its default the logo is painted in green, a slot that has to stay
-readable against red in `git diff` and is therefore bright and saturated. As
-the largest block of colour in the window it drowns everything else out.
-
-### Removing the hook
-
-Before its first write the hook backs up `~/.config/fastfetch/config.jsonc`.
-A theme without a `fastfetch.json` restores that backup, so switching to any
-other theme undoes the colour on its own.
-
-To drop the hook entirely, remove the symlink and run it once by hand:
-
-```bash
+~/.config/omarchy/hooks/theme-set.d/fastfetch --remove
 rm ~/.config/omarchy/hooks/theme-set.d/fastfetch
-~/.config/omarchy/themes/turbo-pascal/hooks/fastfetch --remove
 ```
 
 ## License
