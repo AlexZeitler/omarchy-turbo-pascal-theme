@@ -68,9 +68,10 @@ The theme works as installed. The pieces below reach programs Omarchy does not
 theme, and each needs one step from you. Omarchy refuses to run anything a
 cloned theme brings along on its own, so none of them installs automatically.
 
-All four apply to every theme, not only to this one. A theme that does not ask
-for them gets Omarchy's usual result. Only one file can sit under each name, so
-installing the same extra from another theme replaces this one.
+All five apply to every theme, not only to this one. The lazygit template acts
+for any theme; the others do nothing unless the current theme asks for them.
+Only one file can sit under each name, so installing the same extra from
+another theme replaces this one.
 
 The commands copy rather than link. A copy keeps working after the theme is
 removed, but it does not follow an update: run the command again after
@@ -95,6 +96,42 @@ To remove it:
 
 ```bash
 rm ~/.config/omarchy/themed/neovim.lua.tpl
+omarchy theme set turbo-pascal
+```
+
+### lazygit
+
+lazygit keeps each line's own colour on the selected row, and its default bar
+is the ANSI blue slot. This theme keeps that slot light for directory names,
+so the row turns light on light. The template gives the bar the theme's
+lifted background instead. lazygit reads it as a second config file:
+
+```bash
+mkdir -p ~/.config/omarchy/themed
+cp ~/.config/omarchy/themes/turbo-pascal/themed/lazygit.yml.tpl \
+  ~/.config/omarchy/themed/
+omarchy theme set turbo-pascal
+```
+
+Then add this to `~/.bashrc` and open a new shell. lazygit refuses to start if
+a file in `LG_CONFIG_FILE` is missing, so the snippet lists only files that
+exist:
+
+```bash
+lg_files=()
+for f in "${XDG_CONFIG_HOME:-$HOME/.config}/lazygit/config.yml" \
+         "$HOME/.local/state/omarchy/current/theme/lazygit.yml"; do
+  [[ -f $f ]] && lg_files+=("$f")
+done
+(( ${#lg_files[@]} )) && export LG_CONFIG_FILE=$(IFS=,; echo "${lg_files[*]}")
+unset lg_files f
+```
+
+Inside Neovim, snacks.nvim adds its own theme file after these two, so the
+editor's colours win there. To remove it, delete the template and the snippet:
+
+```bash
+rm ~/.config/omarchy/themed/lazygit.yml.tpl
 omarchy theme set turbo-pascal
 ```
 
